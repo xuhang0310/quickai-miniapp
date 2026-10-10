@@ -35,7 +35,10 @@ npm run dev:h5            # 浏览器里快速看样式
 src/
 ├── api/          请求封装（与网页版 cloudRequest 同一返回格式）和业务接口
 ├── stores/       Pinia：登录态、积分
-├── pages/        index 灵感 · create 创作 · mine 我的 · login 登录
+├── pages/        index 灵感 · create 创作 · template 做同款 · mine 我的 · login 登录
+├── components/   生成结果
+├── composables/  生图与轮询
+├── constants/    分类与商品图种
 ├── static/       图片资源
 ├── App.vue       全局样式与主题变量
 ├── pages.json    路由与 tabBar

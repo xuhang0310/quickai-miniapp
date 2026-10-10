@@ -2,7 +2,12 @@
   "pages": [
     {
       "path": "pages/index/index",
-      "style": { "navigationBarTitleText": "快客 QuickAI" }
+      "style": {
+        "navigationBarTitleText": "快客",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 160,
+        "backgroundTextStyle": "dark"
+      }
     },
     {
       "path": "pages/create/index",
@@ -15,23 +20,42 @@
     {
       "path": "pages/login/index",
       "style": { "navigationBarTitleText": "登录" }
+    },
+    {
+      "path": "pages/template/index",
+      "style": { "navigationBarTitleText": "做同款" }
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "快客 QuickAI",
-    "navigationBarBackgroundColor": "#F7F4F1",
-    "backgroundColor": "#F7F4F1"
+    "navigationBarBackgroundColor": "#F3F3F1",
+    "backgroundColor": "#F3F3F1"
   },
   "tabBar": {
-    "color": "#8A817B",
-    "selectedColor": "#A85A40",
-    "backgroundColor": "#FFFFFF",
+    "color": "#8D8D8D",
+    "selectedColor": "#111111",
+    "backgroundColor": "#F3F3F1",
     "borderStyle": "white",
     "list": [
-      { "pagePath": "pages/index/index", "text": "灵感" },
-      { "pagePath": "pages/create/index", "text": "创作" },
-      { "pagePath": "pages/mine/index", "text": "我的" }
+      {
+        "pagePath": "pages/index/index",
+        "text": "灵感",
+        "iconPath": "static/tab/home.png",
+        "selectedIconPath": "static/tab/home-on.png"
+      },
+      {
+        "pagePath": "pages/create/index",
+        "text": "创作",
+        "iconPath": "static/tab/create.png",
+        "selectedIconPath": "static/tab/create-on.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "static/tab/mine.png",
+        "selectedIconPath": "static/tab/mine-on.png"
+      }
     ]
   }
 }

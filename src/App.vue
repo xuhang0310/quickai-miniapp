@@ -9,46 +9,65 @@ onLaunch(() => {
 
 <style>
 page {
-  --bg: #f7f4f1;
+  --bg: #f3f3f1;
   --card: #ffffff;
-  --line: #ece5df;
-  --text: #241f1c;
-  --text-secondary: #6f6863;
-  --text-muted: #8a817b;
-  --brand: #cf7e5e;
-  --brand-strong: #a85a40;
-  --brand-soft: #f7e9e2;
+  --line: #e4e4e0;
+  --text: #111111;
+  --text-secondary: #3f3f3f;
+  --text-muted: #8d8d8d;
+  --brand: #111111;
+  --brand-strong: #111111;
+  --brand-soft: #efefec;
   --on-brand: #ffffff;
-  --danger: #b42318;
+  --on-brand-dim: rgba(255, 255, 255, 0.62);
+  --on-image: #ffffff;
+  --signal: #ff3b1f;
+  --sand: #ececea;
+  --clay: #e4e4e0;
+  --sage: #ececea;
+  --moss: #111111;
+  --paper: #f7f7f5;
+  --scrim: rgba(17, 17, 17, 0.55);
+  --shadow: none;
+  --danger: #d92d20;
 
   background: var(--bg);
   color: var(--text);
   font-size: 28rpx;
-  line-height: 1.6;
-  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  line-height: 1.5;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', sans-serif;
+}
+
+view,
+text,
+button,
+input,
+image {
+  box-sizing: border-box;
 }
 
 .page {
   min-height: 100vh;
-  padding: 32rpx 32rpx 48rpx;
+  padding: 12rpx 28rpx 56rpx;
   box-sizing: border-box;
 }
 
 .card {
   background: var(--card);
-  border: 1rpx solid var(--line);
-  border-radius: 28rpx;
+  border: none;
+  border-radius: 8rpx;
   padding: 32rpx;
 }
 
 .btn-primary,
 .btn-secondary {
   width: 100%;
-  height: 92rpx;
-  line-height: 92rpx;
-  border-radius: 46rpx;
+  height: 96rpx;
+  line-height: 96rpx;
+  border-radius: 8rpx;
   font-size: 30rpx;
   font-weight: 600;
+  letter-spacing: 1rpx;
 }
 
 .btn-primary {
@@ -57,9 +76,9 @@ page {
 }
 
 .btn-secondary {
-  background: var(--card);
+  background: transparent;
   color: var(--text);
-  border: 1rpx solid var(--line);
+  border: 2rpx solid var(--text);
 }
 
 .btn-primary::after,
@@ -80,12 +99,17 @@ button.btn-secondary[disabled] {
 }
 
 .section-title {
-  font-size: 34rpx;
+  font-size: 36rpx;
   font-weight: 700;
+  letter-spacing: -0.5rpx;
 }
 
 .muted {
   color: var(--text-muted);
   font-size: 24rpx;
+}
+
+.search-placeholder {
+  color: var(--text-muted);
 }
 </style>

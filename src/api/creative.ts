@@ -13,7 +13,7 @@ export interface CreativeTemplate {
   category: string
   like_count: number
   use_count: number
-  is_official: boolean
+  is_official: boolean | number
   created_at: string
 }
 
@@ -40,12 +40,30 @@ export interface GenerateImagePayload {
   resolution?: string
   quality?: 'low' | 'medium' | 'high'
   reference_images?: string[]
+  source_type?: string
 }
 
-export async function getTemplates(params: { page?: number; pageSize?: number; category?: string } = {}) {
+/** 这些模型的参考图字段是 image_urls，其余用 reference_images。与网页版保持一致。 */
+const IMAGE_URL_MODELS = new Set([
+  'gemini-nano-banana-2.1',
+  'gemini-nano-banana-2.1-vip',
+  'nano-banana-pro',
+  'nano-banana-pro-vip',
+  'nano-banana2',
+  'gemini-3-pro-image-preview',
+  'gemini-3-pro-image-preview-vip',
+  'gemini-3.1-flash-image-preview'
+])
+
+export async function getTemplates(params: { page?: number; pageSize?: number; category?: string; search?: string } = {}) {
+  const data: Record<string, unknown> = {}
+  if (params.page) data.page = params.page
+  if (params.pageSize) data.pageSize = params.pageSize
+  if (params.category) data.category = params.category
+  if (params.search) data.search = params.search
   const result = await request<{ list?: CreativeTemplate[]; templates?: CreativeTemplate[]; total: number }>(
     '/api/creative/templates',
-    { data: params }
+    { data }
   )
   if (!result.success || !result.data) return { ...result, data: undefined }
   return {
@@ -54,19 +72,46 @@ export async function getTemplates(params: { page?: number; pageSize?: number; c
   }
 }
 
-export function getTemplate(id: number) {
-  return request<CreativeTemplate>(`/api/creative/templates/${id}`)
+export async function getTemplate(id: number) {
+  const result = await request<CreativeTemplate & { template?: CreativeTemplate }>(`/api/creative/templates/${id}`)
+  if (!result.success || !result.data) return { ...result, data: undefined }
+  const template = result.data.template?.id ? result.data.template : result.data
+  return { ...result, data: template }
 }
 
 export function generateImage(payload: GenerateImagePayload) {
+  const refs = (payload.reference_images || []).filter(url => /^https?:\/\//i.test(url))
+  const data: Record<string, unknown> = {
+    n: 1,
+    source_type: payload.source_type || 'image-creation',
+    prompt: payload.prompt
+  }
+  if (payload.template_id) data.template_id = payload.template_id
+  if (payload.model) data.model = payload.model
+  if (payload.size) data.size = payload.size
+  if (payload.resolution) data.resolution = payload.resolution
+  if (payload.quality) data.quality = payload.quality
+  if (refs.length) {
+    if (payload.model && IMAGE_URL_MODELS.has(payload.model)) data.image_urls = refs
+    else data.reference_images = refs
+  }
   return request<{ task?: ImageTask } & Partial<ImageTask>>('/api/creative/generate', {
     method: 'POST',
-    data: { n: 1, source_type: 'image-creation', ...payload }
+    data
   })
 }
 
 export function getImageTask(id: number) {
   return request<ImageTask>(`/api/creative/task/${id}`)
+}
+
+export async function getImageTasks(params: { page?: number; pageSize?: number } = {}) {
+  const result = await request<{ tasks?: ImageTask[]; list?: ImageTask[]; total?: number }>('/api/creative/tasks', {
+    data: params
+  })
+  if (!result.success || !result.data) return { ...result, data: undefined }
+  const list = result.data.tasks || result.data.list || []
+  return { ...result, data: { list, total: result.data.total || list.length } }
 }
 
 /** 上传参考图，返回可用于生成的图片地址。 */
