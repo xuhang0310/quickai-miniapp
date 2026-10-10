@@ -70,7 +70,6 @@ import { ref, watch } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import JobResult from '@/components/job-result/job-result.vue'
 import { uploadImage } from '@/api/creative'
-import { MP_IMAGE_MODEL } from '@/config'
 import { PRODUCT_KINDS, buildProductPrompt, takePendingKind, type ProductKindKey } from '@/constants/catalog'
 import { useGenerate } from '@/composables/useGenerate'
 import { useUserStore } from '@/stores/user'
@@ -142,7 +141,6 @@ async function submit() {
     }
     await run({
       prompt: buildProductPrompt(currentKind.value, productName.value, points.value),
-      model: MP_IMAGE_MODEL,
       size: '1:1',
       resolution: '1K',
       quality: 'medium',
@@ -158,7 +156,6 @@ async function submit() {
   }
   await run({
     prompt: text,
-    model: MP_IMAGE_MODEL,
     size: ratio.value,
     resolution: '1K',
     quality: 'medium',
@@ -276,7 +273,7 @@ async function submit() {
 }
 
 .kind.on {
-  box-shadow: inset 6rpx 0 0 var(--signal);
+  box-shadow: inset 6rpx 0 0 var(--text);
   padding-left: 16rpx;
 }
 

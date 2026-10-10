@@ -1,3 +1,4 @@
+import { MP_IMAGE_MODEL } from '@/config'
 import { request, upload } from './request'
 
 export interface CreativeTemplate {
@@ -35,7 +36,6 @@ export interface ImageTask {
 export interface GenerateImagePayload {
   prompt: string
   template_id?: number
-  model?: string
   size?: string
   resolution?: string
   quality?: 'low' | 'medium' | 'high'
@@ -80,19 +80,20 @@ export async function getTemplate(id: number) {
 }
 
 export function generateImage(payload: GenerateImagePayload) {
+  const model = MP_IMAGE_MODEL
   const refs = (payload.reference_images || []).filter(url => /^https?:\/\//i.test(url))
   const data: Record<string, unknown> = {
     n: 1,
     source_type: payload.source_type || 'image-creation',
-    prompt: payload.prompt
+    prompt: payload.prompt,
+    model
   }
   if (payload.template_id) data.template_id = payload.template_id
-  if (payload.model) data.model = payload.model
   if (payload.size) data.size = payload.size
   if (payload.resolution) data.resolution = payload.resolution
   if (payload.quality) data.quality = payload.quality
   if (refs.length) {
-    if (payload.model && IMAGE_URL_MODELS.has(payload.model)) data.image_urls = refs
+    if (IMAGE_URL_MODELS.has(model)) data.image_urls = refs
     else data.reference_images = refs
   }
   return request<{ task?: ImageTask } & Partial<ImageTask>>('/api/creative/generate', {

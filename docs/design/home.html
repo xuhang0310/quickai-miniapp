@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
-<title>快客首页 · 好玩且能照着做</title>
+<title>快客首页 · 含水印</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -38,8 +38,25 @@
   .pair { display: flex; gap: 8px; }
   .card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 16px rgba(20,20,20,.05); }
   .pair .card { flex: 1; min-width: 0; }
-  .split { display: flex; height: 132px; position: relative; }
-  .wide .split { height: 148px; }
+  .split { display: flex; height: 108px; position: relative; }
+  .wide .split { height: 96px; }
+  .wm {
+    position: absolute; left: 6%; right: 6%; top: 36%;
+    text-align: center; color: rgba(255,255,255,.88);
+    font-size: 13px; font-weight: 800; letter-spacing: 1px;
+    transform: rotate(-16deg);
+    text-shadow: 0 1px 2px rgba(0,0,0,.45);
+  }
+  .wm.corner {
+    left: auto; right: 6px; top: auto; bottom: 22px;
+    transform: none; letter-spacing: 0; font-size: 10px; font-weight: 700;
+    background: rgba(0,0,0,.42); padding: 2px 5px; border-radius: 4px;
+  }
+  .scribble {
+    position: absolute; left: 18%; right: 18%; top: 42%; height: 28px;
+    border-radius: 14px; background: rgba(255,59,48,.45);
+    transform: rotate(-12deg);
+  }
   .half { flex: 1; position: relative; min-width: 0; }
   .half img { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block; }
   .half em, .tag {
@@ -56,7 +73,7 @@
   .wide { margin-top: 8px; }
   .fun { display: flex; gap: 8px; }
   .fun .card { flex: 1; min-width: 0; }
-  .result { height: 132px; position: relative; background: #eee; }
+  .result { height: 64px; position: relative; background: #eee; }
   .result img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
   .mini {
     position: absolute; left: 6px; bottom: 6px; width: 32px; height: 32px;
@@ -64,7 +81,7 @@
     box-shadow: 0 2px 6px rgba(0,0,0,.25);
   }
   .mini img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; }
-  .fun .meta { padding: 7px 6px 8px; }
+  .fun .meta { padding: 6px 6px 6px; }
   .fun .meta b { font-size: 13px; }
   .tabbar {
     position: absolute; left: 0; right: 0; bottom: 0; height: 78px;
@@ -99,12 +116,14 @@
     text-align: center; line-height: 48px; font-weight: 700; font-size: 16px;
   }
   .hint { margin-top: 8px; text-align: center; color: #8a8a90; font-size: 12px; }
+  .pos { display: flex; gap: 18px; font-size: 14px; color: #8a8a90; }
+  .pos b { color: #111; border-bottom: 2px solid #111; padding-bottom: 4px; }
 </style>
 </head>
 <body>
 <header class="board">
   <h1>快客首页 · 按例子复刻</h1>
-  <p>参照美图秀秀、醒图把效果放在首页的做法。第一屏只放六张能看懂结果的例子：旧照修复、一键高清、路人消失、转 3D、转动漫、转 Q 版。点进去换上自己的照片，按这张例子生成。</p>
+  <p>首页增加两张实用卡。去除水印：涂掉水印再擦除，只改涂过的地方。添加水印：在照片上直接叠一行字，不重新生成。</p>
 </header>
 <div class="row">
   <div class="col">
@@ -116,6 +135,24 @@
         <div class="lead">点一个例子，换上你的照片</div>
         <div class="sec">实用</div>
         <div class="pair">
+          <div class="card">
+            <div class="split">
+              <div class="half"><img src="plays/portrait.jpg" alt="" /><div class="wm">样图水印</div><em>前</em></div>
+              <div class="half"><img src="plays/portrait.jpg" alt="" /><em>后</em></div>
+              <div class="cut"></div>
+            </div>
+            <div class="meta"><b>去除水印</b><span>涂掉水印，其余不动</span></div>
+          </div>
+          <div class="card">
+            <div class="split">
+              <div class="half"><img src="plays/clean.jpg" alt="" /><em>前</em></div>
+              <div class="half"><img src="plays/clean.jpg" alt="" /><div class="wm corner">快客</div><em>后</em></div>
+              <div class="cut"></div>
+            </div>
+            <div class="meta"><b>添加水印</b><span>右下角加一行字</span></div>
+          </div>
+        </div>
+        <div class="pair" style="margin-top:8px">
           <div class="card">
             <div class="split">
               <div class="half"><img src="plays/old.jpg" alt="" /><em>前</em></div>
@@ -166,26 +203,51 @@
   </div>
 
   <div class="col">
-    <p class="label">02 点进去就照着做</p>
+    <p class="label">02 去除水印</p>
     <div class="phone">
       <div class="status">9:41 <i>5G</i></div>
       <div class="screen">
-        <div class="nav"><div class="back">‹</div>旧照修复</div>
+        <div class="nav"><div class="back">‹</div>去除水印</div>
         <div class="hero-split">
-          <div class="half"><img src="plays/old.jpg" alt="" /><em>示例原图</em></div>
-          <div class="half"><img src="plays/portrait.jpg" alt="" /><em>示例结果</em></div>
+          <div class="half"><img src="plays/portrait.jpg" alt="" /><div class="wm">样图水印</div><div class="scribble"></div><em>涂掉水印</em></div>
+          <div class="half"><img src="plays/portrait.jpg" alt="" /><em>只擦这里</em></div>
           <div class="cut"></div>
         </div>
         <div class="steps">
-          <div class="step"><div class="n">1</div><span>先看这张例子的前后差别</span></div>
-          <div class="step"><div class="n">2</div><span>上传一张你的旧照片</span></div>
-          <div class="step"><div class="n">3</div><span>按这个例子生成同款</span></div>
+          <div class="step"><div class="n">1</div><span>上传带水印的照片</span></div>
+          <div class="step"><div class="n">2</div><span>用手指涂住水印</span></div>
+          <div class="step"><div class="n">3</div><span>只补涂过的区域，脸和其余画面保持原图</span></div>
         </div>
-        <div class="hint">六种玩法都走这一页，只换例子和提示词</div>
       </div>
       <div class="dock">
-        <div class="btn">用我的照片复刻</div>
-        <div class="hint">没有照片时，可以先用示例生成</div>
+        <div class="btn">去掉涂抹区域</div>
+        <div class="hint">走现有擦除接口，不整张重画</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="label">03 添加水印</p>
+    <div class="phone">
+      <div class="status">9:41 <i>5G</i></div>
+      <div class="screen">
+        <div class="nav"><div class="back">‹</div>添加水印</div>
+        <div class="hero-split" style="height:300px">
+          <div class="half" style="flex:none;width:100%"><img src="plays/clean.jpg" alt="" /><div class="wm corner" style="font-size:14px;bottom:16px;right:14px">快客出品</div><em>预览</em></div>
+        </div>
+        <div class="card" style="margin-top:14px;padding:12px">
+          <div class="meta" style="padding:0 0 8px"><b>水印文字</b><span>快客出品</span></div>
+          <div class="pos"><span>左下</span><b>右下</b><span>居中</span></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="n">1</div><span>上传照片，输入一行字</span></div>
+          <div class="step"><div class="n">2</div><span>选位置，马上看到预览</span></div>
+          <div class="step"><div class="n">3</div><span>直接叠到原图上，不重新生成</span></div>
+        </div>
+      </div>
+      <div class="dock">
+        <div class="btn">加上水印</div>
+        <div class="hint">在手机上完成，不消耗生图积分</div>
       </div>
     </div>
   </div>

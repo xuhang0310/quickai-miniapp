@@ -114,7 +114,6 @@ async function submit() {
   await run({
     prompt: current.prompt,
     template_id: current.id,
-    model: current.model || undefined,
     size: current.size || '1:1',
     resolution: current.resolution || '1K',
     reference_images: remoteUrl.value ? [remoteUrl.value] : undefined,

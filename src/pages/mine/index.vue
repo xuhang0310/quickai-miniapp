@@ -4,7 +4,7 @@
       <view class="avatar">{{ initial }}</view>
       <view class="profile-text">
         <text class="nickname">{{ userStore.user?.nickname || '快客用户' }}</text>
-        <text class="muted">{{ userStore.user?.email || '微信登录即将开通' }}</text>
+        <text class="muted">{{ userStore.user?.email || '微信用户' }}</text>
       </view>
     </view>
     <view v-else class="profile card">
@@ -38,7 +38,7 @@
     </view>
     <view v-else-if="works.length === 0" class="empty card">
       <text class="empty-title">还没有作品</text>
-      <text class="muted">去灵感广场做一张同款</text>
+      <text class="muted">去首页选一个例子，换上你的照片</text>
     </view>
     <view v-else class="works">
       <view v-for="item in works" :key="item.id" class="work" @tap="openWork(item)">
@@ -197,7 +197,7 @@ onShareAppMessage(() => ({ title: '一张商品图，AI 生成电商主图', pat
   font-weight: 700;
   line-height: 1;
   letter-spacing: -2rpx;
-  color: var(--signal);
+  color: var(--text);
 }
 
 .wallet-note {

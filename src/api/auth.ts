@@ -11,6 +11,7 @@ export interface LoginResult {
   token: string
   user: User
   is_new?: boolean
+  isNew?: boolean
   registration_bonus?: number
 }
 
@@ -19,12 +20,11 @@ export function loginWithEmail(email: string, password: string) {
   return request<LoginResult>('/api/auth/login', { method: 'POST', data: { email, password } })
 }
 
-/** 微信一键登录。后端接口待实现，契约见 docs/PLAN.md 第 5 节。 */
-export function loginWithWechat(code: string, inviteCode?: string) {
-  return request<LoginResult>('/api/auth/wechat-mini/login', {
-    method: 'POST',
-    data: { code, invite_code: inviteCode }
-  })
+/** 微信一键登录。code 来自 uni.login，邀请码字段与现有接口一致。 */
+export function loginWithWechat(code: string, referralCode?: string) {
+  const data: Record<string, unknown> = { code }
+  if (referralCode) data.referralCode = referralCode
+  return request<LoginResult>('/api/auth/wx-login', { method: 'POST', data })
 }
 
 export function getMe() {

@@ -6,8 +6,9 @@
       <text class="muted">新用户登录即送积分</text>
     </view>
 
-    <!-- M2：后端实现 /api/auth/wechat-mini/login 后启用 -->
-    <button class="btn-primary" disabled>微信一键登录（即将上线）</button>
+    <button class="btn-primary" :loading="wechatSubmitting" :disabled="wechatSubmitting || submitting" @tap="wechat">
+      微信一键登录
+    </button>
 
     <view class="divider"><text class="muted">已有网页账号</text></view>
 
@@ -32,7 +33,7 @@
       <view class="policy card" @tap.stop>
         <text class="policy-title">协议摘要</text>
         <text class="policy-body">使用快客生成图片时，请遵守法律法规，不要制作违法或侵犯他人权益的内容。生成结果的使用以平台规则为准。</text>
-        <text class="policy-body">邮箱登录会提交邮箱和密码。你上传的商品图和写下的描述会发送到快客服务器，只用于生成图片。</text>
+        <text class="policy-body">微信登录只提交微信给出的登录凭证。邮箱登录会提交邮箱和密码。你选择的照片和写下的描述会发送到快客服务器，只用于按你的操作处理图片。</text>
         <button class="btn-primary" @tap="acceptPolicy">我已阅读</button>
       </view>
     </view>
@@ -41,15 +42,71 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/stores/user'
+import { publicError } from '@/utils/public'
 
 const userStore = useUserStore()
 const email = ref('')
 const password = ref('')
+const referralCode = ref('')
 const agreed = ref(false)
 const policyOpen = ref(false)
 const submitting = ref(false)
+const wechatSubmitting = ref(false)
 const error = ref('')
+
+onLoad(query => {
+  const code = String(query?.referralCode || query?.invite || '')
+  if (code) referralCode.value = code.slice(0, 32)
+})
+
+function requestLoginCode() {
+  return new Promise<string>((resolve, reject) => {
+    uni.login({
+      provider: 'weixin',
+      success(res) {
+        if (res.code) resolve(res.code)
+        else reject(new Error('没有拿到微信登录凭证'))
+      },
+      fail(err) {
+        reject(new Error(err.errMsg || '微信登录失败'))
+      }
+    })
+  })
+}
+
+async function wechat() {
+  error.value = ''
+  if (!agreed.value) {
+    error.value = '请先阅读并同意用户协议和隐私政策'
+    return
+  }
+  wechatSubmitting.value = true
+  try {
+    const code = await requestLoginCode()
+    const result = await userStore.loginByWechat(code, referralCode.value || undefined)
+    if (!result.success || !result.data?.token) {
+      error.value = publicError(result.error, '微信登录失败，请稍后重试')
+      return
+    }
+    const created = Boolean(result.data.isNew ?? result.data.is_new)
+    uni.showToast({ title: created ? '欢迎，积分已到账' : '登录成功', icon: 'none' })
+    setTimeout(() => leave(), 600)
+  } catch (err) {
+    const message = err instanceof Error ? err.message : ''
+    error.value = /fail|not supported|暂不支持/i.test(message)
+      ? '请在微信小程序里使用微信登录'
+      : publicError(message, '微信登录失败，请稍后重试')
+  } finally {
+    wechatSubmitting.value = false
+  }
+}
+
+function leave() {
+  if (getCurrentPages().length > 1) uni.navigateBack()
+  else uni.switchTab({ url: '/pages/mine/index' })
+}
 
 async function acceptPolicy() {
   agreed.value = true
@@ -74,10 +131,7 @@ async function submit() {
       return
     }
     uni.showToast({ title: '登录成功', icon: 'success' })
-    setTimeout(() => {
-      if (getCurrentPages().length > 1) uni.navigateBack()
-      else uni.switchTab({ url: '/pages/mine/index' })
-    }, 600)
+    setTimeout(() => leave(), 600)
   } finally {
     submitting.value = false
   }

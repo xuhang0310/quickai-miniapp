@@ -1,4 +1,5 @@
 import { API_BASE, CLIENT } from '@/config'
+import { publicError } from '@/utils/public'
 
 /** 与网页版 cloudRequest() 相同的返回格式。 */
 export interface ApiResult<T> {
@@ -38,7 +39,7 @@ function normalize<T>(status: number, body: unknown): ApiResult<T> {
   }
   return {
     success: false,
-    error: String(payload.error || payload.message || `请求失败（${status}）`),
+    error: publicError(String(payload.error || payload.message || ''), `请求失败（${status}）`),
     status
   }
 }
@@ -56,6 +57,38 @@ export function request<T>(
       timeout: 60_000,
       success: res => resolve(normalize<T>(res.statusCode, res.data)),
       fail: err => resolve({ success: false, error: err.errMsg || '网络错误，请稍后重试' })
+    })
+  })
+}
+
+/**
+ * 把文件直接交给已签名的上传地址。
+ * 不附带登录令牌，表单字段在前，文件字段名固定为 file，满足对象存储对字段顺序的要求。
+ */
+export function postSignedFile(
+  url: string,
+  filePath: string,
+  formData: Record<string, string>
+): Promise<ApiResult<null>> {
+  return new Promise(resolve => {
+    uni.uploadFile({
+      url,
+      filePath,
+      name: 'file',
+      formData,
+      timeout: 120_000,
+      success: res => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve({ success: true, status: res.statusCode })
+          return
+        }
+        resolve({
+          success: false,
+          error: res.statusCode === 403 ? '图片上传授权已过期，请重新上传' : `图片直传失败（${res.statusCode}）`,
+          status: res.statusCode
+        })
+      },
+      fail: err => resolve({ success: false, error: err.errMsg || '图片直传失败，请检查网络后重试' })
     })
   })
 }

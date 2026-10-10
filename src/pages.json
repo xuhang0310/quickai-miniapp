@@ -4,8 +4,6 @@
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "快客",
-        "enablePullDownRefresh": true,
-        "onReachBottomDistance": 160,
         "backgroundTextStyle": "dark"
       }
     },
@@ -24,23 +22,35 @@
     {
       "path": "pages/template/index",
       "style": { "navigationBarTitleText": "做同款" }
+    },
+    {
+      "path": "pages/play/index",
+      "style": { "navigationBarTitleText": "复刻" }
+    },
+    {
+      "path": "pages/erase/index",
+      "style": { "navigationBarTitleText": "涂抹处理" }
+    },
+    {
+      "path": "pages/stamp/index",
+      "style": { "navigationBarTitleText": "添加水印" }
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "快客 QuickAI",
-    "navigationBarBackgroundColor": "#F3F3F1",
-    "backgroundColor": "#F3F3F1"
+    "navigationBarTitleText": "快客",
+    "navigationBarBackgroundColor": "#F4F5F7",
+    "backgroundColor": "#F4F5F7"
   },
   "tabBar": {
-    "color": "#8D8D8D",
+    "color": "#8A8A90",
     "selectedColor": "#111111",
-    "backgroundColor": "#F3F3F1",
+    "backgroundColor": "#F4F5F7",
     "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "灵感",
+        "text": "首页",
         "iconPath": "static/tab/home.png",
         "selectedIconPath": "static/tab/home-on.png"
       },

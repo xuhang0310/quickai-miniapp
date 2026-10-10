@@ -27,7 +27,7 @@ export function readTask(raw: unknown): ImageTask | null {
     id,
     template_id: nested.template_id ?? null,
     prompt: String(nested.prompt || ''),
-    model: String(nested.model || ''),
+    model: '',
     size: String(nested.size || ''),
     resolution: String(nested.resolution || ''),
     status: (status === 'generating' ? 'in_progress' : status) as ImageTask['status'],

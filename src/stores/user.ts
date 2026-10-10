@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { getMe, loginWithEmail, type LoginResult, type User } from '@/api/auth'
+import { getMe, loginWithEmail, loginWithWechat, type LoginResult, type User } from '@/api/auth'
 import { getCreditBalance } from '@/api/credits'
 import { getToken, setToken } from '@/api/request'
 
@@ -18,6 +18,15 @@ export const useUserStore = defineStore('user', () => {
 
   async function loginByEmail(email: string, password: string) {
     const result = await loginWithEmail(email, password)
+    if (result.success && result.data?.token) {
+      applyLogin(result.data)
+      await refresh()
+    }
+    return result
+  }
+
+  async function loginByWechat(code: string, referralCode?: string) {
+    const result = await loginWithWechat(code, referralCode)
     if (result.success && result.data?.token) {
       applyLogin(result.data)
       await refresh()
@@ -51,5 +60,5 @@ export const useUserStore = defineStore('user', () => {
     return false
   }
 
-  return { token, user, balance, isLoggedIn, applyLogin, loginByEmail, logout, refresh, requireLogin }
+  return { token, user, balance, isLoggedIn, applyLogin, loginByEmail, loginByWechat, logout, refresh, requireLogin }
 })

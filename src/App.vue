@@ -9,24 +9,24 @@ onLaunch(() => {
 
 <style>
 page {
-  --bg: #f3f3f1;
+  --bg: #f4f5f7;
   --card: #ffffff;
-  --line: #e4e4e0;
-  --text: #111111;
-  --text-secondary: #3f3f3f;
-  --text-muted: #8d8d8d;
+  --line: #e6e6ea;
+  --text: #1c1c1e;
+  --text-secondary: #3a3a3c;
+  --text-muted: #8a8a90;
   --brand: #111111;
   --brand-strong: #111111;
   --brand-soft: #efefec;
   --on-brand: #ffffff;
   --on-brand-dim: rgba(255, 255, 255, 0.62);
   --on-image: #ffffff;
-  --signal: #ff3b1f;
-  --sand: #ececea;
-  --clay: #e4e4e0;
-  --sage: #ececea;
+  --signal: #1c1c1e;
+  --sand: #ececef;
+  --clay: #e6e6ea;
+  --sage: #ececef;
   --moss: #111111;
-  --paper: #f7f7f5;
+  --paper: #f7f7f8;
   --scrim: rgba(17, 17, 17, 0.55);
   --shadow: none;
   --danger: #d92d20;
@@ -55,7 +55,7 @@ image {
 .card {
   background: var(--card);
   border: none;
-  border-radius: 8rpx;
+  border-radius: 32rpx;
   padding: 32rpx;
 }
 
@@ -64,10 +64,9 @@ image {
   width: 100%;
   height: 96rpx;
   line-height: 96rpx;
-  border-radius: 8rpx;
-  font-size: 30rpx;
-  font-weight: 600;
-  letter-spacing: 1rpx;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 700;
 }
 
 .btn-primary {
