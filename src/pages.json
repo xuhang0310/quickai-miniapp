@@ -1,0 +1,37 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": { "navigationBarTitleText": "快客 QuickAI" }
+    },
+    {
+      "path": "pages/create/index",
+      "style": { "navigationBarTitleText": "创作" }
+    },
+    {
+      "path": "pages/mine/index",
+      "style": { "navigationBarTitleText": "我的" }
+    },
+    {
+      "path": "pages/login/index",
+      "style": { "navigationBarTitleText": "登录" }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "快客 QuickAI",
+    "navigationBarBackgroundColor": "#F7F4F1",
+    "backgroundColor": "#F7F4F1"
+  },
+  "tabBar": {
+    "color": "#8A817B",
+    "selectedColor": "#A85A40",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "灵感" },
+      { "pagePath": "pages/create/index", "text": "创作" },
+      { "pagePath": "pages/mine/index", "text": "我的" }
+    ]
+  }
+}

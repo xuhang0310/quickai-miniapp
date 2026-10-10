@@ -1,0 +1,84 @@
+import { API_BASE, CLIENT } from '@/config'
+
+/** 与网页版 cloudRequest() 相同的返回格式。 */
+export interface ApiResult<T> {
+  success: boolean
+  data?: T
+  error?: string
+  status?: number
+}
+
+type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
+
+const TOKEN_KEY = 'quickai_token'
+
+export function getToken(): string {
+  return uni.getStorageSync(TOKEN_KEY) || ''
+}
+
+export function setToken(token: string) {
+  if (token) uni.setStorageSync(TOKEN_KEY, token)
+  else uni.removeStorageSync(TOKEN_KEY)
+}
+
+function headers(json: boolean): Record<string, string> {
+  const token = getToken()
+  return {
+    ...(json ? { 'Content-Type': 'application/json' } : {}),
+    'X-Client': CLIENT,
+    ...(token ? { Authorization: `Bearer ${token}` } : {})
+  }
+}
+
+function normalize<T>(status: number, body: unknown): ApiResult<T> {
+  if (status === 401) setToken('')
+  const payload = (body && typeof body === 'object' ? body : {}) as Record<string, any>
+  if (status >= 200 && status < 300 && payload.success !== false) {
+    return { success: true, data: ('data' in payload ? payload.data : payload) as T, status }
+  }
+  return {
+    success: false,
+    error: String(payload.error || payload.message || `请求失败（${status}）`),
+    status
+  }
+}
+
+export function request<T>(
+  path: string,
+  options: { method?: Method; data?: Record<string, unknown> } = {}
+): Promise<ApiResult<T>> {
+  return new Promise(resolve => {
+    uni.request({
+      url: `${API_BASE}${path}`,
+      method: options.method || 'GET',
+      data: options.data,
+      header: headers(true),
+      timeout: 60_000,
+      success: res => resolve(normalize<T>(res.statusCode, res.data)),
+      fail: err => resolve({ success: false, error: err.errMsg || '网络错误，请稍后重试' })
+    })
+  })
+}
+
+/** 以 multipart/form-data 上传本地文件。 */
+export function upload<T>(path: string, filePath: string, name = 'image'): Promise<ApiResult<T>> {
+  return new Promise(resolve => {
+    uni.uploadFile({
+      url: `${API_BASE}${path}`,
+      filePath,
+      name,
+      header: headers(false),
+      timeout: 120_000,
+      success: res => {
+        let body: unknown = {}
+        try {
+          body = JSON.parse(res.data as string)
+        } catch {
+          body = {}
+        }
+        resolve(normalize<T>(res.statusCode, body))
+      },
+      fail: err => resolve({ success: false, error: err.errMsg || '上传失败，请稍后重试' })
+    })
+  })
+}

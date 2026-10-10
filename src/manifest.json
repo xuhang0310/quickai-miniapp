@@ -1,0 +1,29 @@
+{
+  "name": "快客 QuickAI",
+  "appid": "",
+  "description": "一张商品图，AI 生成电商主图、场景图和种草图。",
+  "versionName": "0.1.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": false,
+      "es6": true,
+      "minified": true
+    },
+    "usingComponents": true,
+    "lazyCodeLoading": "requiredComponents"
+  },
+  "mp-toutiao": {
+    "appid": "",
+    "usingComponents": true
+  },
+  "h5": {
+    "title": "快客 QuickAI"
+  },
+  "uniStatistics": {
+    "enable": false
+  },
+  "vueVersion": "3"
+}
