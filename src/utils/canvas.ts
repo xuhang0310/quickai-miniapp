@@ -32,17 +32,33 @@ export function containRect(boxW: number, boxH: number, imgW: number, imgH: numb
   return { x: (boxW - w) / 2, y: (boxH - h) / 2, w, h }
 }
 
-export function queryCanvas(proxy: unknown, selector: string): Promise<{ node: CanvasNode; width: number; height: number }> {
+export interface CanvasBox {
+  node: CanvasNode
+  width: number
+  height: number
+  left: number
+  top: number
+}
+
+export function queryCanvas(proxy: unknown, selector: string): Promise<CanvasBox> {
   return new Promise((resolve, reject) => {
+    let settled = false
+    const finish = (row: any) => {
+      if (settled || !row?.node) return
+      settled = true
+      resolve({
+        node: row.node as CanvasNode,
+        width: Number(row.width || 0),
+        height: Number(row.height || 0),
+        left: Number(row.left || 0),
+        top: Number(row.top || 0)
+      })
+    }
     const query = uni.createSelectorQuery()
     if (proxy) query.in(proxy as any)
-    query.select(selector).fields({ node: true, size: true } as any, () => {}).exec((res: any[]) => {
-      const row = res?.[0]
-      if (!row?.node) {
-        reject(new Error('画布还没准备好，请重试'))
-        return
-      }
-      resolve({ node: row.node as CanvasNode, width: Number(row.width || 0), height: Number(row.height || 0) })
+    query.select(selector).fields({ node: true, size: true, rect: true } as any, (row: any) => finish(row)).exec((res: any[]) => {
+      finish(res?.[0])
+      if (!settled) reject(new Error('画布还没准备好，请重试'))
     })
   })
 }

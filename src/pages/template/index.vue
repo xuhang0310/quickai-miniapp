@@ -16,7 +16,7 @@
         <text class="muted">{{ template.category || '灵感' }} · {{ template.use_count || 0 }} 人做过</text>
       </view>
 
-      <text v-if="template.prompt" class="prompt">{{ template.prompt }}</text>
+      <text v-if="shownPrompt" class="prompt">{{ shownPrompt }}</text>
 
       <view class="uploader" @tap="pickImage">
         <image v-if="localPath" class="uploader-img" :src="localPath" mode="aspectFill" />
@@ -49,6 +49,7 @@ import { getTemplate, uploadImage, type CreativeTemplate } from '@/api/creative'
 import { coverHeight } from '@/constants/catalog'
 import { useGenerate } from '@/composables/useGenerate'
 import { useUserStore } from '@/stores/user'
+import { publicError } from '@/utils/public'
 
 const userStore = useUserStore()
 const { running, task, error, run } = useGenerate()
@@ -61,6 +62,7 @@ const uploading = ref(false)
 const uploadError = ref('')
 
 const cover = computed(() => Math.min(coverHeight(template.value?.size || '1:1'), 720))
+const shownPrompt = computed(() => (template.value?.prompt ? publicError(template.value.prompt, '') : ''))
 
 watch(() => task.value?.status, status => {
   if (status === 'completed') void userStore.refresh()

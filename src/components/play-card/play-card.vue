@@ -1,5 +1,5 @@
 <template>
-  <view :class="['tile', layout]">
+  <view :class="['tile', 'is-' + layout]">
     <view v-if="layout === 'fun'" class="result">
       <image class="fill" :src="after" mode="aspectFill" lazy-load />
       <image class="inset" :src="before" mode="aspectFill" />
@@ -40,6 +40,7 @@ defineProps<{
 
 <style scoped>
 .tile {
+  width: 100%;
   background: var(--card);
   border-radius: 32rpx;
   overflow: hidden;
@@ -48,23 +49,27 @@ defineProps<{
 
 .split {
   display: flex;
+  width: 100%;
   height: 300rpx;
   position: relative;
   background: var(--sand);
 }
 
-.wide .split {
+.is-wide .split {
   height: 340rpx;
 }
 
 .half {
   position: relative;
   flex: 1;
+  width: 0;
   min-width: 0;
   height: 100%;
+  overflow: hidden;
 }
 
 .fill {
+  display: block;
   width: 100%;
   height: 100%;
 }
@@ -138,8 +143,10 @@ defineProps<{
 
 .result {
   position: relative;
+  width: 100%;
   height: 280rpx;
   background: var(--sand);
+  overflow: hidden;
 }
 
 .inset {

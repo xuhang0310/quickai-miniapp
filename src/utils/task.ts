@@ -1,4 +1,5 @@
 import type { ImageTask } from '@/api/creative'
+import { publicError } from '@/utils/public'
 
 function readUrl(value: unknown): string {
   if (typeof value === 'string') return value
@@ -34,7 +35,7 @@ export function readTask(raw: unknown): ImageTask | null {
     progress: Number(nested.progress || 0),
     result_url: result || null,
     credits_charged: Number(nested.credits_charged || 0),
-    error_message: nested.error_message ? String(nested.error_message) : null,
+    error_message: nested.error_message ? publicError(String(nested.error_message), '生成失败') : null,
     created_at: String(nested.created_at || '')
   }
 }

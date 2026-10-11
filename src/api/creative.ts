@@ -1,4 +1,5 @@
 import { MP_IMAGE_MODEL } from '@/config'
+import { readTask } from '@/utils/task'
 import { request, upload } from './request'
 
 export interface CreativeTemplate {
@@ -76,7 +77,7 @@ export async function getTemplate(id: number) {
   const result = await request<CreativeTemplate & { template?: CreativeTemplate }>(`/api/creative/templates/${id}`)
   if (!result.success || !result.data) return { ...result, data: undefined }
   const template = result.data.template?.id ? result.data.template : result.data
-  return { ...result, data: template }
+  return { ...result, data: { ...template, model: '' } }
 }
 
 export function generateImage(payload: GenerateImagePayload) {
@@ -111,7 +112,9 @@ export async function getImageTasks(params: { page?: number; pageSize?: number }
     data: params
   })
   if (!result.success || !result.data) return { ...result, data: undefined }
-  const list = result.data.tasks || result.data.list || []
+  const list = (result.data.tasks || result.data.list || [])
+    .map(item => readTask(item))
+    .filter((item): item is ImageTask => Boolean(item))
   return { ...result, data: { list, total: result.data.total || list.length } }
 }
 

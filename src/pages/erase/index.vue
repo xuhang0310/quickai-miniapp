@@ -103,6 +103,8 @@ let imgW = 0
 let imgH = 0
 let viewW = 0
 let viewH = 0
+let viewLeft = 0
+let viewTop = 0
 let box: ViewBox = { x: 0, y: 0, w: 1, h: 1 }
 let board: CanvasNode | null = null
 let boardCtx: CanvasRenderingContext2D | null = null
@@ -137,12 +139,13 @@ async function prepare(path: string) {
   await nextPaint()
   try {
     const info = await readImageInfo(path)
-    const stage = await queryCanvas(proxy, '#paint')
-    if (!stage.width || !stage.height) throw new Error('画布还没准备好，请重试')
+    const stage = await queryReady('#paint')
     imgW = info.width
     imgH = info.height
     viewW = stage.width
     viewH = stage.height
+    viewLeft = stage.left
+    viewTop = stage.top
     box = containRect(viewW, viewH, imgW, imgH)
     const dpr = uni.getSystemInfoSync().pixelRatio || 1
     stage.node.width = Math.round(viewW * dpr)
@@ -162,6 +165,21 @@ function nextPaint() {
   return new Promise<void>(resolve => setTimeout(resolve, 40))
 }
 
+async function queryReady(selector: string, sized = true) {
+  let last = '画布还没准备好，请重试'
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      const stage = await queryCanvas(proxy, selector)
+      if (!sized || (stage.width && stage.height)) return stage
+      last = '画布还没准备好，请重试'
+    } catch (err) {
+      last = err instanceof Error ? err.message : last
+    }
+    await new Promise<void>(resolve => setTimeout(resolve, 60 * (attempt + 1)))
+  }
+  throw new Error(last)
+}
+
 function render() {
   if (!boardCtx || !photo) return
   const ctx = boardCtx
@@ -175,9 +193,12 @@ function render() {
 
 function pointOf(event: any) {
   const touch = event?.touches?.[0] || event?.changedTouches?.[0]
-  if (!touch || typeof touch.x !== 'number' || !box.w || !box.h) return null
-  const x = ((touch.x - box.x) / box.w) * imgW
-  const y = ((touch.y - box.y) / box.h) * imgH
+  if (!touch || !box.w || !box.h) return null
+  const localX = typeof touch.x === 'number' ? touch.x : Number(touch.clientX) - viewLeft
+  const localY = typeof touch.y === 'number' ? touch.y : Number(touch.clientY) - viewTop
+  if (!Number.isFinite(localX) || !Number.isFinite(localY)) return null
+  const x = ((localX - box.x) / box.w) * imgW
+  const y = ((localY - box.y) / box.h) * imgH
   if (x < 0 || y < 0 || x > imgW || y > imgH) return null
   return { x, y }
 }
@@ -220,7 +241,7 @@ function clearMask() {
 
 async function exportPair() {
   const fitted = fitSize(imgW, imgH)
-  const stage = await queryCanvas(proxy, '#exporter')
+  const stage = await queryReady('#exporter', false)
   stage.node.width = fitted.width
   stage.node.height = fitted.height
   const ctx = stage.node.getContext('2d')
@@ -250,9 +271,10 @@ async function waitJob(id: string) {
     if (!job) {
       if (attempt >= 4) throw new Error(publicError(result.error, '查询处理结果失败'))
     } else {
+      const status = job.status.toLowerCase()
       statusText.value = job.progress ? `正在处理 ${job.progress}%` : '正在处理涂抹区域'
-      if (job.status === 'completed' || job.status === 'succeeded' || job.status === 'success') return job
-      if (job.status === 'failed' || job.status === 'error') throw new Error(publicError(job.error || '', '处理失败'))
+      if (status === 'completed' || status === 'succeeded' || status === 'success') return job
+      if (status === 'failed' || status === 'error') throw new Error(publicError(job.error || '', '处理失败'))
     }
     await new Promise<void>(resolve => {
       timer = setTimeout(resolve, 2000)

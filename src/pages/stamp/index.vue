@@ -1,7 +1,7 @@
 <template>
   <view class="page detail">
     <view class="preview">
-      <image class="preview-img" :src="localPath || example" mode="aspectFill" />
+      <image class="preview-img" :src="localPath || example" mode="widthFix" />
       <text :class="['mark', place]">{{ shownText }}</text>
       <text class="badge">预览</text>
     </view>
@@ -60,6 +60,19 @@ const saving = ref(false)
 const error = ref('')
 const shownText = computed(() => text.value.trim() || '快客出品')
 
+async function queryExport() {
+  let last: Error = new Error('画布还没准备好，请重试')
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      return await queryCanvas(proxy, '#exporter')
+    } catch (err) {
+      last = err instanceof Error ? err : last
+      await new Promise<void>(resolve => setTimeout(resolve, 60 * (attempt + 1)))
+    }
+  }
+  throw last
+}
+
 function pickImage() {
   if (saving.value) return
   uni.chooseImage({
@@ -87,7 +100,7 @@ async function save() {
   try {
     const info = await readImageInfo(localPath.value)
     const fitted = fitSize(info.width, info.height)
-    const stage = await queryCanvas(proxy, '#exporter')
+    const stage = await queryExport()
     stage.node.width = fitted.width
     stage.node.height = fitted.height
     const ctx = stage.node.getContext('2d')
@@ -133,15 +146,14 @@ onShareAppMessage(() => ({ title: '给照片加一行字', path: '/pages/stamp/i
 
 .preview {
   position: relative;
-  height: 640rpx;
   overflow: hidden;
   border-radius: 36rpx;
   background: var(--sand);
 }
 
 .preview-img {
+  display: block;
   width: 100%;
-  height: 100%;
 }
 
 .mark {
@@ -173,7 +185,7 @@ onShareAppMessage(() => ({ title: '给照片加一行字', path: '/pages/stamp/i
 .badge {
   position: absolute;
   left: 16rpx;
-  bottom: 16rpx;
+  top: 16rpx;
   padding: 0 16rpx;
   height: 40rpx;
   line-height: 40rpx;
@@ -181,10 +193,6 @@ onShareAppMessage(() => ({ title: '给照片加一行字', path: '/pages/stamp/i
   background: rgba(0, 0, 0, 0.58);
   color: #fff;
   font-size: 22rpx;
-}
-
-.mark.bl {
-  bottom: 72rpx;
 }
 
 .panel {

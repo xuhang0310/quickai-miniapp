@@ -54,7 +54,7 @@ import { uploadImage } from '@/api/creative'
 import { useGenerate } from '@/composables/useGenerate'
 import { closestFrame, findPlay, type Play } from '@/constants/plays'
 import { useUserStore } from '@/stores/user'
-import { readImageInfo } from '@/utils/imageFile'
+import { readImageInfo, uploadableImagePath } from '@/utils/imageFile'
 
 const userStore = useUserStore()
 const { running, task, error, run } = useGenerate()
@@ -92,7 +92,8 @@ async function uploadPicked(path: string) {
   try {
     const info = await readImageInfo(path)
     frame.value = closestFrame(info.width, info.height)
-    const result = await uploadImage(path)
+    const filePath = await uploadableImagePath(info.path || path)
+    const result = await uploadImage(filePath)
     if (!result.success || !result.data?.url) {
       localPath.value = ''
       uploadError.value = result.error || '上传失败，请换一张图片'

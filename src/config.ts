@@ -1,6 +1,9 @@
 /** 云端 API 地址，与网页版 VITE_CLOUD_API_URL 指向同一服务。 */
 export const API_BASE = (import.meta.env.VITE_API_BASE || 'https://openclaw.aisupermarket.top').replace(/\/$/, '')
 
+/** Java 升级接口。微信登录走这里，其余接口仍用 API_BASE。 */
+export const JAVA_API_BASE = (import.meta.env.VITE_JAVA_API_BASE || 'https://console-9f4c2a7e6b13.aisupermarket.top/kuaike-api').replace(/\/$/, '')
+
 /** 当前编译平台，如 mp-weixin、mp-toutiao、h5，随请求上报便于后端区分渠道。 */
 export const CLIENT = process.env.UNI_PLATFORM || 'unknown'
 

@@ -44,7 +44,7 @@
 | 我的 | 积分余额、我的作品、分享、邮箱账号与网页版互通说明 | 需要 |
 | 登录 | 微信一键登录，新用户送注册积分。邮箱登录仍可用 | — |
 
-微信一键登录调用现有 `POST /api/auth/wx-login`，请求 `{ code, referralCode? }`，返回 `{ token, isNew, registration_bonus, user }`。`code` 来自 `uni.login`。邮箱登录保留，方便使用已有网页账号。小程序生图固定走同一个模型，标识只出现在请求体里，不出现在页面、分享和报错文案里。
+微信一键登录调用 Java `POST /api/v1/auth/wx-login`，请求 `{ code, referralCode? }`，返回 `{ token, isNew, registration_bonus, user }`。`code` 来自 `uni.login`。小程序身份在 `sys_config`：`product.auth.wechat-app-id`、`product.auth.wechat-app-secret`。邮箱登录和其他接口仍走现有 Node 服务。小程序生图固定走同一个模型，标识只出现在请求体里，不出现在页面、分享和报错文案里。
 
 ## 4. 引流闭环
 
@@ -71,7 +71,7 @@
 
 | 接口 | 说明 |
 |---|---|
-| `POST /api/auth/wx-login` | 现有 Node 服务已提供。请求 `{ code, nickname?, avatarUrl?, referralCode?, deviceId? }`，返回 `{ token, isNew, registration_bonus, user }`。小程序已接入。规划早期写过的 `/api/auth/wechat-mini/login` 没有实现，不再使用 |
+| `POST /api/v1/auth/wx-login` | Java 已提供，小程序微信登录走这个接口。请求 `{ code, nickname?, avatarUrl?, referralCode?, deviceId? }`，返回 `{ token, isNew, registration_bonus, user }`。AppID、AppSecret 在 `sys_config`。规划早期写过的 `/api/auth/wechat-mini/login` 没有实现，不再使用 |
 | `POST /api/auth/wechat-mini/bind` | 已有网页账号的用户在小程序里用邮箱密码登录一次，后端把 openid 绑到该账号，积分和作品互通 |
 | `GET /api/wechat-mini/qrcode?scene=` | 调 `wxacode.getUnlimited` 生成小程序码，用于海报 |
 | 内容安全 | 渠道为小程序时，提示词调 `msgSecCheck`，参考图调 `mediaCheckAsync`；结果图的审核策略待定 |

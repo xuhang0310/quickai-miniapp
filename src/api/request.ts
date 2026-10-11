@@ -46,11 +46,12 @@ function normalize<T>(status: number, body: unknown): ApiResult<T> {
 
 export function request<T>(
   path: string,
-  options: { method?: Method; data?: Record<string, unknown> } = {}
+  options: { method?: Method; data?: Record<string, unknown>; base?: string } = {}
 ): Promise<ApiResult<T>> {
+  const base = (options.base || API_BASE).replace(/\/$/, '')
   return new Promise(resolve => {
     uni.request({
-      url: `${API_BASE}${path}`,
+      url: `${base}${path}`,
       method: options.method || 'GET',
       data: options.data,
       header: headers(true),
